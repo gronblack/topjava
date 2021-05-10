@@ -9,9 +9,16 @@ public class UserMealWithExcess {
 
     private final int calories;
 
-    private final boolean excess;
+    private final ExcessStore excess;
 
     public UserMealWithExcess(LocalDateTime dateTime, String description, int calories, boolean excess) {
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
+        this.excess = new ExcessStore(excess);
+    }
+
+    public UserMealWithExcess(LocalDateTime dateTime, String description, int calories, ExcessStore excess) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
@@ -19,6 +26,13 @@ public class UserMealWithExcess {
     }
 
     public UserMealWithExcess(UserMeal userMeal, boolean excess) {
+        dateTime = userMeal.getDateTime();
+        description = userMeal.getDescription();
+        calories = userMeal.getCalories();
+        this.excess = new ExcessStore(excess);
+    }
+
+    public UserMealWithExcess(UserMeal userMeal, ExcessStore excess) {
         dateTime = userMeal.getDateTime();
         description = userMeal.getDescription();
         calories = userMeal.getCalories();
@@ -31,7 +45,27 @@ public class UserMealWithExcess {
                 "dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
-                ", excess=" + excess +
+                ", excess=" + excess.get() +
                 '}';
+    }
+
+    public static class ExcessStore {
+        private Boolean storedExcess;
+
+        public Boolean get() {
+            return storedExcess;
+        }
+
+        public void set(Boolean storedExcess) {
+            this.storedExcess = storedExcess;
+        }
+
+        public ExcessStore() {
+            storedExcess = Boolean.FALSE;
+        }
+
+        public ExcessStore(Boolean storedExcess) {
+            this.storedExcess = storedExcess;
+        }
     }
 }

@@ -22,11 +22,18 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
 
+        System.out.println("Cycles:");
         List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsTo.forEach(System.out::println);
 
+        System.out.println("\nCycles one loop:");
+        filteredByCyclesOneLoop(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000)
+                .forEach(System.out::println);
+
+        System.out.println("\nStreams:");
         System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
+
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSum = new HashMap<>();
@@ -38,7 +45,33 @@ public class UserMealsUtil {
         List<UserMealWithExcess> result = new ArrayList<>();
         meals.forEach(userMeal -> {
             if (TimeUtil.isBetweenHalfOpen(userMeal.getTime(), startTime, endTime)) {
-                result.add(new UserMealWithExcess(userMeal,caloriesSum.get(userMeal.getDate()) > caloriesPerDay));
+                result.add(new UserMealWithExcess(userMeal, caloriesSum.get(userMeal.getDate()) > caloriesPerDay));
+            }
+        });
+        return result;
+    }
+
+    public static List<UserMealWithExcess> filteredByCyclesOneLoop(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+        Map<LocalDate, Integer> caloriesSum = new HashMap<>();
+        Map<LocalDate, UserMealWithExcess.ExcessStore> caloriesExcess = new HashMap<>();
+        List<UserMealWithExcess> result = new ArrayList<>();
+        meals.forEach(meal -> {
+            // calories sum per day
+            LocalDate date = meal.getDate();
+            caloriesSum.put(date, caloriesSum.getOrDefault(date, 0) + meal.getCalories());
+
+            // excess fact per day
+            UserMealWithExcess.ExcessStore excessStore = caloriesExcess.get(date);
+            Boolean excessValue = caloriesSum.get(meal.getDate()) > caloriesPerDay;
+            if (excessStore == null) {
+                excessStore = new UserMealWithExcess.ExcessStore(excessValue);
+                caloriesExcess.put(date, excessStore);
+            } else {
+                excessStore.set(excessValue);
+            }
+
+            if (TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime)) {
+                result.add(new UserMealWithExcess(meal, caloriesExcess.get(date)));
             }
         });
         return result;
