@@ -50,7 +50,7 @@ public class UserMealWithExcess {
     }
 
     public static class ExcessStore {
-        private Boolean storedExcess;
+        private boolean storedExcess;
 
         public Boolean get() {
             return storedExcess;
@@ -61,7 +61,7 @@ public class UserMealWithExcess {
         }
 
         public ExcessStore() {
-            storedExcess = Boolean.FALSE;
+            storedExcess = false;
         }
 
         public ExcessStore(Boolean storedExcess) {
