@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UserMealWithExcess {
     private final LocalDateTime dateTime;
@@ -9,33 +10,19 @@ public class UserMealWithExcess {
 
     private final int calories;
 
-    private final ExcessStore excess;
+    private final AtomicBoolean excess;
 
     public UserMealWithExcess(LocalDateTime dateTime, String description, int calories, boolean excess) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-        this.excess = new ExcessStore(excess);
+        this.excess = new AtomicBoolean(excess);
     }
 
-    public UserMealWithExcess(LocalDateTime dateTime, String description, int calories, ExcessStore excess) {
+    public UserMealWithExcess(LocalDateTime dateTime, String description, int calories, AtomicBoolean excess) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-        this.excess = excess;
-    }
-
-    public UserMealWithExcess(UserMeal userMeal, boolean excess) {
-        dateTime = userMeal.getDateTime();
-        description = userMeal.getDescription();
-        calories = userMeal.getCalories();
-        this.excess = new ExcessStore(excess);
-    }
-
-    public UserMealWithExcess(UserMeal userMeal, ExcessStore excess) {
-        dateTime = userMeal.getDateTime();
-        description = userMeal.getDescription();
-        calories = userMeal.getCalories();
         this.excess = excess;
     }
 
@@ -45,27 +32,7 @@ public class UserMealWithExcess {
                 "dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
-                ", excess=" + excess.get() +
+                ", excess=" + excess +
                 '}';
-    }
-
-    public static class ExcessStore {
-        private boolean storedExcess;
-
-        public Boolean get() {
-            return storedExcess;
-        }
-
-        public void set(Boolean storedExcess) {
-            this.storedExcess = storedExcess;
-        }
-
-        public ExcessStore() {
-            storedExcess = false;
-        }
-
-        public ExcessStore(Boolean storedExcess) {
-            this.storedExcess = storedExcess;
-        }
     }
 }
