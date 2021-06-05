@@ -1,6 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <!DOCTYPE html>
@@ -12,44 +10,44 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
-<table>
+<table class="meals">
     <thead>
         <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Calories</th>
+            <th class="meals__caption">Date</th>
+            <th class="meals__caption">Description</th>
+            <th class="meals__caption">Calories</th>
             <th></th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         <c:forEach items="${list}" var="mealTo">
-            <tr <c:if test="${mealTo.excess == true}">class="red"</c:if> <c:if test="${mealTo.excess == false}">class="green"</c:if> >
-                <td>${fn:replace(mealTo.dateTime, "T", " ")}</td>
-                <td><c:out value="${mealTo.description}"/></td>
-                <td><c:out value="${mealTo.calories}"/></td>
-                <td><a href="meals?action=update">Update</a></td>
-                <td><a href="meals?action=delete">Delete</a></td>
+            <tr class="meals__row${mealTo.excess ? " meals__row_red" : ""}">
+                <td class="meals__cell">${mealTo.dateTime.toString().replaceAll("T", " ")}</td>
+                <td class="meals__cell">${mealTo.description}</td>
+                <td class="meals__cell">${mealTo.calories}</td>
+                <td class="meals__cell"><a href="meals?action=update">Update</a></td>
+                <td class="meals__cell"><a href="meals?action=delete">Delete</a></td>
             </tr>
         </c:forEach>
     </tbody>
 </table>
 
 <style>
-    table, td, th {
-        border: 1px solid black;
-    }
-    table {
+    .meals {
         border-collapse: collapse;
     }
-    th, td {
-        padding: 4px;
+    .meals__row {
+        color: green;
     }
-    .red {
+    .meals__row.meals__row_red {
         color: red;
     }
-    .green {
-        color: green;
+    .meals, .meals__caption, .meals__cell {
+        border: 1px solid black;
+    }
+    .meals__caption, .meals__cell {
+        padding: 4px;
     }
 </style>
 </body>
