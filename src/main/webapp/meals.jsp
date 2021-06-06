@@ -1,6 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -10,6 +9,7 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
+<p><a href="meals?action=add">Add Meal</a></p>
 <table class="meals">
     <thead>
         <tr>
@@ -23,11 +23,11 @@
     <tbody>
         <c:forEach items="${list}" var="mealTo">
             <tr class="meals__row${mealTo.excess ? " meals__row_red" : ""}">
-                <td class="meals__cell">${mealTo.dateTime.toString().replaceAll("T", " ")}</td>
+                <td class="meals__cell">${formatter.format(mealTo.dateTime)}</td>
                 <td class="meals__cell">${mealTo.description}</td>
                 <td class="meals__cell">${mealTo.calories}</td>
-                <td class="meals__cell"><a href="meals?action=update">Update</a></td>
-                <td class="meals__cell"><a href="meals?action=delete">Delete</a></td>
+                <td class="meals__cell"><a href="meals?action=update&id=${mealTo.id}">Update</a></td>
+                <td class="meals__cell"><a href="meals?action=delete&id=${mealTo.id}">Delete</a></td>
             </tr>
         </c:forEach>
     </tbody>
