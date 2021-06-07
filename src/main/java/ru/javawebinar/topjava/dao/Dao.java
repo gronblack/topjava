@@ -2,10 +2,10 @@ package ru.javawebinar.topjava.dao;
 
 import java.util.List;
 
-public interface Dao<T, ID> {
+public interface Dao<T> {
     List<T> getAll();
-    T get(ID id);
+    T get(int id);
     T add(T elem);
     T update(T elem);
-    void delete(ID id);
+    void delete(int id);
 }

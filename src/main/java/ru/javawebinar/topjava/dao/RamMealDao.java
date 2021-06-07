@@ -4,19 +4,18 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-public class MealDaoRam implements Dao<Meal, Integer> {
+public class RamMealDao implements Dao<Meal> {
     private final AtomicInteger idCounter;
     private final Map<Integer, Meal> meals;
 
-    public MealDaoRam() {
+    public RamMealDao() {
         idCounter = new AtomicInteger();
         meals = new ConcurrentHashMap<>();
         Arrays.asList(
@@ -27,41 +26,35 @@ public class MealDaoRam implements Dao<Meal, Integer> {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
-        ).forEach(meal -> {
-            meal.setId(idCounter.incrementAndGet());
-            add(meal);
-        });
+        ).forEach(this::add);
     }
 
     @Override
     public List<Meal> getAll() {
-        return meals.values().stream()
-                .sorted(Comparator.comparing(Meal::getDateTime))
-                .collect(Collectors.toList());
+        return new ArrayList<>(meals.values());
     }
 
     @Override
     public Meal add(Meal meal) {
-        meal.setId(idCounter.incrementAndGet());
+        meal.setId(idCounter.getAndIncrement());
         meals.put(meal.getId(), meal);
         return meal;
     }
 
     @Override
-    public Meal get(Integer id) {
+    public Meal get(int id) {
         return meals.get(id);
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(int id) {
         meals.remove(id);
     }
 
     @Override
     public Meal update(Meal meal) {
-        if (meal.getId() == null || !meals.containsKey(meal.getId()))
+        if (meals.replace(meal.getId(), meal) == null)
             return null;
-        meals.put(meal.getId(), meal);
         return meal;
     }
 }

@@ -7,7 +7,7 @@
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
-<h2>Edit Meal</h2>
+<h2>${caption}</h2>
 <form class="mealForm" action="meals" method="post">
     <p class="mealForm__row">
         <label class="mealForm__label" for="datetime">DateTime:</label>
@@ -23,8 +23,8 @@
     </p>
     <input name="id" type="hidden" value="${meal.id}">
     <p class="mealForm__row mealForm__row_buttons">
-        <input type="submit">
-        <input type="reset">
+        <input type="submit" value="Save">
+        <input type="button" onclick="location.href='meals'" value="Cancel">
     </p>
 </form>
 
