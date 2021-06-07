@@ -59,7 +59,7 @@ public class MealDaoRam implements Dao<Meal, Integer> {
 
     @Override
     public Meal update(Meal meal) {
-        if (meal.getId() == null)
+        if (meal.getId() == null || !meals.containsKey(meal.getId()))
             return null;
         meals.put(meal.getId(), meal);
         return meal;
