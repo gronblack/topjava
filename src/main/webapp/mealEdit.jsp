@@ -11,7 +11,7 @@
 <form class="mealForm" action="meals" method="post">
     <p class="mealForm__row">
         <label class="mealForm__label" for="datetime">DateTime:</label>
-        <input class="mealForm__input" id="datetime" name="datetime" type="datetime" value="${formatter.format(meal.dateTime)}">
+        <input class="mealForm__input" id="datetime" name="datetime" type="datetime-local" value="${meal.dateTime}">
     </p>
     <p class="mealForm__row">
         <label class="mealForm__label" for="description">Description:</label>
