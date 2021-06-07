@@ -51,34 +51,32 @@ public class MealServlet extends HttpServlet {
                 String id = request.getParameter("id");
                 if (id != null && !id.isEmpty()) {
                     dao.delete(Integer.parseInt(id));
-                    log.debug("delete meal:" + id);
+                    log.debug("delete meal:{}", id);
                     response.sendRedirect("meals");
-                    log.debug("action Delete: redirect to /meals.jsp");
+                    log.debug("action Delete: redirect to /meals");
                     return;
                 }
                 break;
             case "add":
                 request.setAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 0));
-                request.setAttribute("caption", "Add Meal");
                 log.debug("action Add: forward to /mealEdit.jsp");
                 request.getRequestDispatcher("/mealEdit.jsp").forward(request, response);
-                break;
+                return;
             case "update":
                 id = request.getParameter("id");
                 if (id != null && !id.isEmpty()) {
                     request.setAttribute("meal", dao.get(Integer.parseInt(id)));
-                    request.setAttribute("caption", "Edit Meal");
-                    log.debug("action Update: redirect to /meals.jsp");
+                    log.debug("action Update: forward to /mealEdit.jsp");
                     request.getRequestDispatcher("/mealEdit.jsp").forward(request, response);
                 }
-                break;
+                return;
         }
 
         // show all
         List<MealTo> list = MealsUtil.filteredByStreams(dao.getAll(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
         request.setAttribute("list", list);
         request.setAttribute("formatter", FORMATTER);
-        log.debug("forward to /meals.jsp");
+        log.debug("show all, forward to /meals.jsp");
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 
@@ -91,13 +89,13 @@ public class MealServlet extends HttpServlet {
         String id = request.getParameter("id");
         if (id == null || id.isEmpty()) {
             dao.add(meal);
-            log.debug("add meal:" + meal.getId());
+            log.debug("add meal:{}", meal.getId());
         } else {
             meal.setId(Integer.parseInt(id));
             dao.update(meal);
-            log.debug("update meal:" + meal.getId());
+            log.debug("update meal:{}", meal.getId());
         }
-        log.debug("redirect to /meals.jsp");
+        log.debug("redirect to /meals");
         response.sendRedirect("meals");
     }
 }

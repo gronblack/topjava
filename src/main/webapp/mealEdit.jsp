@@ -7,7 +7,7 @@
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
-<h2>${caption}</h2>
+<h2>${meal.id == null ? "Add" : "Edit"} Meal</h2>
 <form class="mealForm" action="meals" method="post">
     <p class="mealForm__row">
         <label class="mealForm__label" for="datetime">DateTime:</label>
