@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.DateTimeUtil;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
@@ -17,10 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
@@ -51,11 +48,11 @@ public class MealServlet extends HttpServlet {
                 Integer.parseInt(request.getParameter("calories")));
 
         if (meal.isNew()) {
-            controller.create(meal);
             log.info("Create {}", meal);
+            controller.create(meal);
         } else {
-            controller.update(meal, meal.getId());
             log.info("Update {}", meal);
+            controller.update(meal, meal.getId());
         }
         response.sendRedirect("meals");
     }
@@ -81,7 +78,7 @@ public class MealServlet extends HttpServlet {
                 break;
             case "filter":
                 log.info("getAll with filter");
-                request.setAttribute("meals", controller.getAll(getFilterParams(request)));
+                request.setAttribute("meals", getAllFiltered(request));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":
@@ -98,26 +95,20 @@ public class MealServlet extends HttpServlet {
         return Integer.parseInt(paramId);
     }
 
-    private Map<String, Temporal> getFilterParams(HttpServletRequest request) {
-        Map<String, Temporal> result = new HashMap<>();
-        Enumeration<String> params = request.getParameterNames();
-        while (params.hasMoreElements()) {
-            String name = params.nextElement();
-            switch (name) {
-                case "startDate":
-                case "endDate":
-                    String value = request.getParameter(name);
-                    if (value != null && !value.isEmpty())
-                        result.put(name, LocalDate.parse(value, DateTimeUtil.DATE_FORMATTER));
-                    break;
-                case "startTime":
-                case "endTime":
-                    value = request.getParameter(name);
-                    if (value != null && !value.isEmpty())
-                        result.put(name, LocalTime.parse(value, DateTimeUtil.TIME_FORMATTER));
-                    break;
-            }
-        }
-        return result;
+    private List<MealTo> getAllFiltered(HttpServletRequest request) {
+        return controller.getAllFiltered(
+                parseDate(request.getParameter("startDate")),
+                parseTime(request.getParameter("startTime")),
+                parseDate(request.getParameter("endDate")),
+                parseTime(request.getParameter("endTime"))
+        );
+    }
+
+    private LocalDate parseDate(String value) {
+        return value == null || value.isEmpty() ? null : LocalDate.parse(value);
+    }
+
+    private LocalTime parseTime(String value) {
+        return value == null || value.isEmpty() ? null : LocalTime.parse(value);
     }
 }
