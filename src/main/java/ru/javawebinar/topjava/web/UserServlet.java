@@ -23,7 +23,7 @@ public class UserServlet extends HttpServlet {
             log.info("Users: set auth user");
             SecurityUtil.setAuthUserId(Integer.parseInt(userId));
         }
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
+        response.sendRedirect("meals");
     }
 
     @Override
