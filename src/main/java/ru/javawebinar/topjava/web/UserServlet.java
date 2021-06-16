@@ -18,14 +18,10 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
 
-        if (StringUtils.hasLength(request.getParameter("userId"))) {
-            String userId = request.getParameter("userIdSelect");
-            if (StringUtils.hasLength(userId)) {
-                log.info("Users: set auth user");
-                SecurityUtil.setAuthUserId(Integer.parseInt(userId));
-            }
-        } else {
-            request.setAttribute("userId", SecurityUtil.authUserId());
+        String userId = request.getParameter("userId");
+        if (StringUtils.hasLength(userId)) {
+            log.info("Users: set auth user");
+            SecurityUtil.setAuthUserId(Integer.parseInt(userId));
         }
         request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
