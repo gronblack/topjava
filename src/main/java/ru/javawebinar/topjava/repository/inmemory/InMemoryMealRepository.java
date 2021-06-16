@@ -7,7 +7,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -25,7 +24,7 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.adminMeals.forEach(meal -> save(meal, SecurityUtil.authUserId()));
+        MealsUtil.adminMeals.forEach(meal -> save(meal, 1));
         MealsUtil.userMeals.forEach(meal -> save(meal, 2));
     }
 
@@ -33,7 +32,7 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            repository.computeIfAbsent(userId, integer -> new HashMap<>()).put(meal.getId(), meal);
+            repository.computeIfAbsent(userId, integer -> new ConcurrentHashMap<>()).put(meal.getId(), meal);
             log.info("save {}", meal);
             return meal;
         }
@@ -62,7 +61,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate) {
         log.info("getAll meals with filter");
-        return prepare(getMealsMap(userId), DateTimeUtil.getDateFilter(startDate, endDate));
+        return prepare(getMealsMap(userId), meal -> DateTimeUtil.isBetweenClosed(meal.getDate(), startDate, endDate));
     }
 
     private List<Meal> prepare(Map<Integer, Meal> map, Predicate<Meal> predicate) {
@@ -73,7 +72,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     private Map<Integer, Meal> getMealsMap(int userId) {
-        return repository.getOrDefault(userId, new HashMap<>());
+        return repository.getOrDefault(userId, Collections.EMPTY_MAP);
     }
 }
 

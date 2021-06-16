@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.StringUtils;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
@@ -78,7 +77,11 @@ public class MealServlet extends HttpServlet {
                 break;
             case "filter":
                 log.info("getAll with filter");
-                request.setAttribute("meals", getAllFiltered(request));
+                request.setAttribute("meals", controller.getAllFiltered(
+                    parseDate(request.getParameter("startDate")),
+                    parseTime(request.getParameter("startTime")),
+                    parseDate(request.getParameter("endDate")),
+                    parseTime(request.getParameter("endTime"))));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":
@@ -95,20 +98,11 @@ public class MealServlet extends HttpServlet {
         return Integer.parseInt(paramId);
     }
 
-    private List<MealTo> getAllFiltered(HttpServletRequest request) {
-        return controller.getAllFiltered(
-                parseDate(request.getParameter("startDate")),
-                parseTime(request.getParameter("startTime")),
-                parseDate(request.getParameter("endDate")),
-                parseTime(request.getParameter("endTime"))
-        );
-    }
-
     private LocalDate parseDate(String value) {
-        return value == null || value.isEmpty() ? null : LocalDate.parse(value);
+        return StringUtils.hasLength(value) ? LocalDate.parse(value) : null;
     }
 
     private LocalTime parseTime(String value) {
-        return value == null || value.isEmpty() ? null : LocalTime.parse(value);
+        return StringUtils.hasLength(value) ? LocalTime.parse(value) : null;
     }
 }
