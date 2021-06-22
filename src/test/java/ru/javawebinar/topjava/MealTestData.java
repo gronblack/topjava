@@ -4,61 +4,36 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
     public static final int NOT_FOUND = 10;
     public static final LocalDate DATE_START = LocalDate.of(2020, 1, 30);
     public static final LocalDate DATE_END = LocalDate.of(2020, 1, 31);
     public static final List<Meal> userMeals;
-    public static final List<Meal> adminMeals;
     public static final List<Meal> userMealsOneDate;
-    public static final List<Meal> adminMealsOneDate;
+    public static final List<Meal> userMealsBetween;
 
-    public static final Meal meal100002 = new Meal(100002, LocalDateTime.of(2020, 1, 30, 10, 0), "Завтрак чемпиона", 400);
-    public static final Meal meal100003 = new Meal(100003, LocalDateTime.of(2020, 1, 30, 13, 0), "Котлетки", 1000);
-    public static final Meal meal100004 = new Meal(100004, LocalDateTime.of(2020, 1, 30, 20, 0), "Салатик", 500);
-    public static final Meal meal100005 = new Meal(100005, LocalDateTime.of(2020, 1, 31, 0, 0), "Студень Загадочный", 200);
-    public static final Meal meal100006 = new Meal(100006, LocalDateTime.of(2020, 1, 31, 19, 30), "Много всего", 1000);
-    public static final Meal meal100007 = new Meal(100007, LocalDateTime.of(2020, 1, 31, 13, 25), "Обед, да", 500);
-    public static final Meal meal100008 = new Meal(100008, LocalDateTime.of(2020, 1, 31, 20, 0), "Ужин из пива", 410);
-    public static final Meal meal100009 = new Meal(100009, LocalDateTime.of(2020, 1, 30, 10, 0), "Завтрак админа", 500);
-    public static final Meal meal100010 = new Meal(100010, LocalDateTime.of(2020, 1, 30, 13, 0), "Обед админа", 1000);
-    public static final Meal meal100011 = new Meal(100011, LocalDateTime.of(2020, 1, 30, 20, 0), "Ужин админа", 500);
-    public static final Meal meal100012 = new Meal(100012, LocalDateTime.of(2020, 1, 31, 0, 0), "Еда на граничное значение админа", 100);
-    public static final Meal meal100013 = new Meal(100013, LocalDateTime.of(2020, 1, 31, 10, 0), "Завтрак админа 2", 1000);
-    public static final Meal meal100014 = new Meal(100014, LocalDateTime.of(2020, 1, 31, 20, 0), "Ужин админа 2", 410);
+    public static final Meal userMeal100002 = new Meal(START_SEQ + 2, LocalDateTime.of(2020, 1, 30, 10, 0), "Завтрак чемпиона", 400);
+    public static final Meal userMeal100003 = new Meal(START_SEQ + 3, LocalDateTime.of(2020, 1, 30, 13, 0), "Котлетки", 1000);
+    public static final Meal userMeal100004 = new Meal(START_SEQ + 4, LocalDateTime.of(2020, 1, 30, 20, 0), "Салатик", 500);
+    public static final Meal userMeal100005 = new Meal(START_SEQ + 5, LocalDateTime.of(2020, 1, 31, 0, 0), "Студень Загадочный", 200);
+    public static final Meal userMeal100006 = new Meal(START_SEQ + 6, LocalDateTime.of(2020, 1, 31, 19, 30), "Много всего", 1000);
+    public static final Meal userMeal100007 = new Meal(START_SEQ + 7, LocalDateTime.of(2020, 1, 31, 13, 25), "Обед, да", 500);
+    public static final Meal userMeal100008 = new Meal(START_SEQ + 8, LocalDateTime.of(2020, 1, 31, 20, 0), "Ужин из пива", 410);
+    public static final Meal userMeal100009 = new Meal(START_SEQ + 9, LocalDateTime.of(2020, 2, 1, 20, 0), "Ужин юзера 1 февраля", 510);
+    public static final Meal userMeal100010 = new Meal(START_SEQ + 10, LocalDateTime.of(2020, 2, 1, 10, 25), "Завтрак юзера 1 февраля", 650);
+
+    public static final Meal adminMeal100011 = new Meal(START_SEQ + 11, LocalDateTime.of(2020, 1, 30, 10, 0), "Завтрак админа", 500);
 
     static {
-        userMeals = new ArrayList<>();
-        userMeals.add(meal100008);
-        userMeals.add(meal100006);
-        userMeals.add(meal100007);
-        userMeals.add(meal100005);
-        userMeals.add(meal100004);
-        userMeals.add(meal100003);
-        userMeals.add(meal100002);
-
-        userMealsOneDate = new ArrayList<>();
-        userMealsOneDate.add(meal100004);
-        userMealsOneDate.add(meal100003);
-        userMealsOneDate.add(meal100002);
-
-        adminMeals = new ArrayList<>();
-        adminMeals.add(meal100014);
-        adminMeals.add(meal100013);
-        adminMeals.add(meal100012);
-        adminMeals.add(meal100011);
-        adminMeals.add(meal100010);
-        adminMeals.add(meal100009);
-
-        adminMealsOneDate = new ArrayList<>();
-        adminMealsOneDate.add(meal100011);
-        adminMealsOneDate.add(meal100010);
-        adminMealsOneDate.add(meal100009);
+        userMeals = Arrays.asList(userMeal100009, userMeal100010, userMeal100008, userMeal100006, userMeal100007, userMeal100005, userMeal100004, userMeal100003, userMeal100002);
+        userMealsOneDate = Arrays.asList(userMeal100004, userMeal100003, userMeal100002);
+        userMealsBetween = Arrays.asList(userMeal100008, userMeal100006, userMeal100007, userMeal100005, userMeal100004, userMeal100003, userMeal100002);
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
