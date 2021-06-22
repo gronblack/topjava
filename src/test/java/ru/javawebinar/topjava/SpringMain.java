@@ -18,7 +18,7 @@ public class SpringMain {
     public static void main(String[] args) {
         // java 7 automatic resource management (ARM)
         System.out.println("---------- JDBC TEST -------------------------------");
-        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-db.xml", "spring/spring-app-jdbc.xml")) {
+        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/*.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
@@ -35,7 +35,7 @@ public class SpringMain {
         }
 
         System.out.print("\n\n---------- IN MEMORY TEST -------------------------------\n");
-        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-db.xml", "spring/spring-app-inmemory.xml")) {
+        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring-test/spring-app-inmemory.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
