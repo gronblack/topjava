@@ -1,19 +1,35 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@NamedQueries({
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT Meal FROM Meal WHERE user.id=:user_id ORDER BY dateTime DESC"),
+        @NamedQuery(name = Meal.ALL_SORTED_BETWEEN, query = "SELECT Meal FROM Meal WHERE user.id=:user_id AND dateTime >= :start AND dateTime < :end ORDER BY dateTime DESC")
+})
+@Entity
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
+    public static final String ALL_SORTED = "Meal.getAllSorted";
+    public static final String ALL_SORTED_BETWEEN = "Meal.getAllSortedBetween";
+
+    @Column(name = "date_time", nullable = false)
+    @NotNull
     private LocalDateTime dateTime;
 
+    @Column(name = "description", nullable = false)
+    @NotNull
     private String description;
 
+    @Column(name = "calories", nullable = false)
     private int calories;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
+    @NotNull
     private User user;
 
     public Meal() {
