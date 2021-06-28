@@ -35,11 +35,10 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+    private static final HashMap<String, Long> millisTotal = new HashMap<>();
 
     @Autowired
     private MealService service;
-
-    private static final HashMap<String, Long> millisTotal = new HashMap<>();
 
     @Rule
     public TestWatcher watcher = new TestWatcher() {
