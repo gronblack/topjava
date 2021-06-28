@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -33,12 +34,14 @@ public class MealServiceTest {
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
+        //assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
+        assertThrows(EntityNotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
     public void deleteNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, USER_ID));
+        //assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, USER_ID));
+        assertThrows(EntityNotFoundException.class, () -> service.delete(NOT_FOUND, USER_ID));
     }
 
     @Test
@@ -70,7 +73,8 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
+        //assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
+        assertThrows(EntityNotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
     }
 
     @Test
