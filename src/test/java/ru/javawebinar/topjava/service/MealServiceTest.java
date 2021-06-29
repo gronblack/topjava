@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.service;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -17,10 +17,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -35,46 +34,35 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final HashMap<String, Long> millisTotal = new HashMap<>();
+    private static final StringBuilder summary = new StringBuilder("\n");
 
     @Autowired
     private MealService service;
 
     @Rule
-    public TestWatcher watcher = new TestWatcher() {
-        long millis;
-
+    public Stopwatch stopwatch = new Stopwatch() {
         @Override
-        protected void starting(Description description) {
-            millis = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void finished(Description description) {
-            millis = System.currentTimeMillis() - millis;
-            millisTotal.put(description.getMethodName(), millis);
-            log.info("TEST {} DURATION: {}ms", description.getMethodName(), millis);
+        protected void finished(long nanos, Description description) {
+            String current = String.format("%s - %dms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            summary.append(current).append("\n");
+            log.info(current);
         }
     };
 
     @AfterClass
     public static void after() {
-        System.out.printf("\nTESTS TOTAL DURATION: %dms\n", millisTotal.values().stream().reduce(0L, Long::sum));
-        millisTotal.forEach((s, l) -> System.out.printf("%s: %dms\n", s, l));
-        System.out.println();
+        log.info(summary.toString());
     }
 
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
-        //assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
-        assertThrows(EntityNotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
     public void deleteNotFound() {
-        //assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, USER_ID));
-        assertThrows(EntityNotFoundException.class, () -> service.delete(NOT_FOUND, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, USER_ID));
     }
 
     @Test
@@ -106,8 +94,7 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() {
-        //assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
-        assertThrows(EntityNotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
     }
 
     @Test

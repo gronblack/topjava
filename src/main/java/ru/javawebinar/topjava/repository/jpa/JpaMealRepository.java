@@ -23,31 +23,33 @@ public class JpaMealRepository implements MealRepository {
         if (meal.isNew()) {
             meal.setUser(em.getReference(User.class, userId));
             em.persist(meal);
-            return meal;
+        } else {
+            if (em.createNamedQuery(Meal.UPDATE)
+                    .setParameter("id", meal.getId())
+                    .setParameter("user_id", userId)
+                    .setParameter("description", meal.getDescription())
+                    .setParameter("calories", meal.getCalories())
+                    .setParameter("date_time", meal.getDateTime())
+                    .executeUpdate() == 0) {
+                return null;
+            }
         }
-        Meal m = em.getReference(Meal.class, meal.getId());
-        if (m.getUser().getId() == userId) {
-            meal.setUser(m.getUser());
-            return em.merge(meal);
-        }
-        return null;
+        return meal;
     }
 
     @Override
     @Transactional
     public boolean delete(int id, int userId) {
-        Meal meal = em.getReference(Meal.class, id);
-        if (meal.getUser().getId() == userId) {
-            em.remove(meal);
-            return true;
-        }
-        return false;
+        return em.createNamedQuery(Meal.DELETE)
+                .setParameter("id", id)
+                .setParameter("user_id", userId)
+                .executeUpdate() != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = em.getReference(Meal.class, id);
-        return meal.getUser().getId() == userId ? meal : null;
+        Meal meal = em.find(Meal.class, id);
+        return meal != null && meal.getUser().getId() == userId ? meal : null;
     }
 
     @Override
