@@ -19,6 +19,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
@@ -34,7 +35,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final StringBuilder summary = new StringBuilder("\n");
+    private static final HashMap<String, Long> summary = new HashMap<>();
 
     @Autowired
     private MealService service;
@@ -43,15 +44,18 @@ public class MealServiceTest {
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            String current = String.format("%s - %dms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
-            summary.append(current).append("\n");
-            log.info(current);
+            summary.put(description.getMethodName(), nanos);
+            log.info("{} - {}ms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
         }
     };
 
     @AfterClass
     public static void after() {
-        log.info(summary.toString());
+        int col1 = summary.keySet().stream().mapToInt(String::length).max().orElse(0);
+        String format = "%-" + col1 + "." + col1 + "s - %dms";
+        StringBuilder sb = new StringBuilder("\n");
+        summary.forEach((key, value) -> sb.append(String.format(format, key, TimeUnit.NANOSECONDS.toMillis(value))).append("\n"));
+        log.info(sb.toString());
     }
 
     @Test
