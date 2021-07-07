@@ -2,34 +2,28 @@ package ru.javawebinar.topjava.repository.datajpa;
 
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public class DataJpaMealRepository implements MealRepository {
     private final CrudMealRepository crudRepository;
-    private final EntityManager em;
+    private final CrudUserRepository ur;
 
-    public DataJpaMealRepository(CrudMealRepository crudRepository, EntityManager em) {
+    public DataJpaMealRepository(CrudMealRepository crudRepository, CrudUserRepository ur) {
         this.crudRepository = crudRepository;
-        this.em = em;
+        this.ur = ur;
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
-        if (meal.isNew()) {
-            meal.setUser(em.getReference(User.class, userId));
+        if (meal.isNew() || get(meal.id(), userId) != null) {
+            meal.setUser(ur.getById(userId));
             return crudRepository.save(meal);
-        } else if (get(meal.id(), userId) == null) {
-            return null;
-        } else if (meal.getUser() == null) {
-            meal.setUser(em.getReference(User.class, userId));
         }
-        return crudRepository.save(meal);
+        return null;
     }
 
     @Override
@@ -39,8 +33,7 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = crudRepository.findById(id).orElse(null);
-        return meal != null && meal.getUser().getId() == userId ? meal : null;
+        return crudRepository.findById(id).filter(m -> m.getUser().getId() == userId).orElse(null);
     }
 
     @Override
