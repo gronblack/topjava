@@ -5,7 +5,20 @@ const ctx = {
     ajaxUrl: userAjaxUrl
 };
 
-// $(document).ready(function () {
+function enable(chkbox, id) {
+    let enabled = chkbox.is(":checked");
+    $.ajax({
+        url: userAjaxUrl + id,
+        type: "POST",
+        data: "enabled=" + enabled
+    }).done(function () {
+        chkbox.closest("tr").attr("data-enabled", enabled);
+        successNoty(enabled ? "common.enabled" : "common.disabled");
+    }).fail(function () {
+        $(chkbox).prop("checked", !enabled);
+    });
+}
+
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
