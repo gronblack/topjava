@@ -3,13 +3,13 @@ package ru.javawebinar.topjava.web.user;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = AdminRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,12 +52,10 @@ public class AdminRestController extends AbstractUserController {
         super.update(user, id);
     }
 
-    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}/enable", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void enable(@RequestBody Map<String, ?> params, @PathVariable int id) {
-        User u = super.get(id);
-        u.setEnabled((Boolean) params.get("enabled"));
-        super.update(u, id);
+    public void enable(@RequestParam @Nullable boolean enabled, @PathVariable int id) {
+        super.enable(id, enabled);
     }
 
     @Override

@@ -23,7 +23,7 @@ public class MealUIController extends AbstractMealController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void create(@RequestParam(required = false) Integer id,
+    public void create(@RequestParam @Nullable Integer id,
                        @RequestParam LocalDateTime dateTime,
                        @RequestParam String description,
                        @RequestParam int calories) {
