@@ -54,7 +54,7 @@ public class AdminRestController extends AbstractUserController {
 
     @PostMapping(value = "/{id}/enable", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void enable(@RequestParam @Nullable boolean enabled, @PathVariable int id) {
+    public void enable(@RequestParam boolean enabled, @PathVariable int id) {
         super.enable(id, enabled);
     }
 
