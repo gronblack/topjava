@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.web.user;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
@@ -52,7 +51,7 @@ public class AdminRestController extends AbstractUserController {
         super.update(user, id);
     }
 
-    @PostMapping(value = "/{id}/enable", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PatchMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enable(@RequestParam boolean enabled, @PathVariable int id) {
         super.enable(id, enabled);

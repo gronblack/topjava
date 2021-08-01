@@ -98,9 +98,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     void enable() throws Exception {
         User userCopy = new User(user);
-        perform(MockMvcRequestBuilders.post(REST_URL + USER_ID + "/enable")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("enabled", String.valueOf(!userCopy.isEnabled())))
+        perform(MockMvcRequestBuilders.patch(REST_URL + USER_ID + "?enabled=" + !userCopy.isEnabled()))
                 .andExpect(status().isNoContent());
         userCopy.setEnabled(!userCopy.isEnabled());
         MATCHER.assertMatch(userService.get(USER_ID), userCopy);
