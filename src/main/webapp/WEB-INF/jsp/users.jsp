@@ -76,10 +76,8 @@
         </div>
     </div>
 </div>
-<jsp:include page="fragments/footer.jsp"/>
+<jsp:include page="fragments/footer.jsp">
+    <jsp:param name="entity" value="user"/>
+</jsp:include>
 </body>
-<script type="text/javascript">
-    i18n["addTitle"] = '<spring:message code="user.add"/>';
-    i18n["editTitle"] = '<spring:message code="user.edit"/>';
-</script>
 </html>

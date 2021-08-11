@@ -10,12 +10,10 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/profile/meals", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,25 +38,15 @@ public class MealUIController extends AbstractMealController {
         super.delete(id);
     }
 
-
-
     @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<String> createOrUpdate(@Valid MealTo to, BindingResult result) {
+    public ResponseEntity<String> createOrUpdate(@Valid Meal meal, BindingResult result) {
         if (result.hasErrors()) {
-            try {
-                ValidationUtil.validate(to);
-            } catch (ConstraintViolationException e) {
-                String errorFieldsMsg = e.getConstraintViolations().stream()
-                        .map(cv -> String.format("[%s] %s", cv.getPropertyPath(), cv.getMessage()))
-                        .collect(Collectors.joining("<br>"));
-                return ResponseEntity.unprocessableEntity().body(errorFieldsMsg);
-            }
+            return ValidationUtil.getErrorMessage(result);
         }
-        if (to.isNew()) {
-            super.create(to);
+        if (meal.isNew()) {
+            super.create(meal);
         } else {
-            super.update(to, to.getId());
+            super.update(meal, meal.getId());
         }
         return ResponseEntity.ok().build();
     }

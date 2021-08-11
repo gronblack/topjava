@@ -33,17 +33,6 @@ $.ajaxSetup({
         }
     }
 });
-$(document).ajaxSend(function(event, jqxhr, settings) {
-    let dateTime = $("#dateTime").datetimepicker('getValue');
-    if (dateTime instanceof Date) {
-        // https://stackoverflow.com/a/37661393
-        dateTime = new Date (dateTime.getTime() - dateTime.getTimezoneOffset() * 60000);
-
-        let params = new URLSearchParams(settings.data);
-        params.set("dateTime", dateTime.toISOString());
-        settings.data = params.toString();
-    }
-});
 
 $(function () {
     makeEditable(

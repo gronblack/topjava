@@ -59,15 +59,13 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void update() throws Exception {
-        MealTo updated = new MealTo(MEAL1_ID, LocalDateTime.now(), "New meal", 555, true);
-        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+        Meal updated = getUpdated();
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
-
-        Meal updatedCopy = new Meal(updated.getId(), updated.getDateTime(), updated.getDescription(), updated.getCalories());
-        MATCHER.assertMatch(mealService.get(MEAL1_ID, USER_ID), updatedCopy);
+        MATCHER.assertMatch(mealService.get(MEAL1_ID, USER_ID), updated);
     }
 
     @Test
