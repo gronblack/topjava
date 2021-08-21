@@ -10,7 +10,6 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
-import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,10 +90,20 @@ class AdminRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
-                .content(JsonUtil.writeValue(updated)))
+                .content(UserTestData.jsonWithPassword(updated, updated.getPassword())))
                 .andExpect(status().isNoContent());
 
         MATCHER.assertMatch(userService.get(USER_ID), updated);
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        User invalid = getInvalid();
+        perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(UserTestData.jsonWithPassword(invalid, invalid.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -111,6 +120,16 @@ class AdminRestControllerTest extends AbstractControllerTest {
         newUser.setId(newId);
         MATCHER.assertMatch(created, newUser);
         MATCHER.assertMatch(userService.get(newId), newUser);
+    }
+
+    @Test
+    void createWithLocationInvalid() throws Exception {
+        User invalid = getInvalid();
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(invalid, "invalid")))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

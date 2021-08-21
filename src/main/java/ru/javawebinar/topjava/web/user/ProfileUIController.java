@@ -15,16 +15,17 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/profile")
 public class ProfileUIController extends AbstractUserController {
+    private static final String viewName = "profile";
 
     @GetMapping
     public String profile() {
-        return "profile";
+        return viewName;
     }
 
     @PostMapping
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
         if (result.hasErrors()) {
-            return "profile";
+            return viewName;
         } else {
             super.update(userTo, SecurityUtil.authUserId());
             SecurityUtil.get().setTo(userTo);
@@ -37,14 +38,14 @@ public class ProfileUIController extends AbstractUserController {
     public String register(ModelMap model) {
         model.addAttribute("userTo", new UserTo());
         model.addAttribute("register", true);
-        return "profile";
+        return viewName;
     }
 
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
         if (result.hasErrors()) {
             model.addAttribute("register", true);
-            return "profile";
+            return viewName;
         } else {
             super.create(userTo);
             status.setComplete();
